@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxy AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="brand">✦ GALAXY AI</div>
+
+    <button id="newChatBtn" class="new-chat">
+      + New Chat
+    </button>
+
+    <h3>YOUR CHATS</h3>
+    <div id="history" class="history"></div>
+
+    <div class="sidebar-bottom">
+      <p>Powered by Galaxy AI</p>
+      <span>Version 1.0</span>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header>
+      <button id="menuBtn" class="menu-btn">☰</button>
+      <div class="model-name">Galaxy AI <span>● Online UI</span></div>
+      <button id="themeBtn" class="theme-btn">☀</button>
+    </header>
+
+    <section id="chatArea" class="chat-area">
+      <div id="welcome" class="welcome">
+        <div class="logo">✦</div>
+        <h1>Welcome to <span>Galaxy AI</span></h1>
+        <p>Your universe of ideas starts here.</p>
+
+        <div class="suggestions">
+          <button class="suggestion">💡 Explain something simply</button>
+          <button class="suggestion">💻 Help me write code</button>
+          <button class="suggestion">🚀 Give me creative ideas</button>
+        </div>
+      </div>
+
+      <div id="messages" class="messages"></div>
+    </section>
+
+    <div class="composer-area">
+      <form id="chatForm" class="composer">
+        <textarea
+          id="userInput"
+          placeholder="Message Galaxy AI..."
+          rows="1"
+          required
+        ></textarea>
+        <button type="submit" id="sendBtn">➤</button>
+      </form>
+      <p class="disclaimer">
+        Galaxy AI can make mistakes. Check important information.
+      </p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
