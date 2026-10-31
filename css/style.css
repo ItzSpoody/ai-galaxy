@@ -100,6 +100,7 @@ button, input {
     min-height: 570px;
     padding: 100px 20px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -179,6 +180,57 @@ button, input {
     font-size: 12px;
     letter-spacing: 2px;
     margin-top: 16px;
+}
+
+/* EXPLORE BUTTON */
+
+.main-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 13px 25px;
+    background: var(--secondary);
+    color: white;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.main-button:hover {
+    background: var(--primary);
+    transform: translateY(-3px);
+}
+
+/* GALAXY VOICE AI BUTTON */
+
+.voice-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+    padding: 14px 25px;
+    border: 1px solid rgba(130, 110, 255, 0.7);
+    border-radius: 14px;
+    background: linear-gradient(110deg, #8257ff, #39c9e8);
+    color: #080817;
+    text-decoration: none;
+    font-weight: 800;
+    box-shadow: 0 0 22px rgba(130, 87, 255, 0.25);
+    transition: 0.25s ease;
+}
+
+.voice-button span {
+    font-size: 18px;
+    transition: transform 0.25s ease;
+}
+
+.voice-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(130, 87, 255, 0.5);
+}
+
+.voice-button:hover span {
+    transform: translateX(4px);
 }
 
 /* SECTIONS */
