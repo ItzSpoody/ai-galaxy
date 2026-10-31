@@ -39,9 +39,9 @@ button, input {
     font: inherit;
 }
 
-/* NAVBAR */
+/* HEADER */
 
-.navbar {
+.header {
     min-height: 76px;
     padding: 0 8%;
     display: flex;
@@ -61,37 +61,19 @@ button, input {
     color: var(--primary);
 }
 
-.navbar nav {
+.header nav {
     display: flex;
     gap: 30px;
 }
 
-.navbar nav a {
+.header nav a {
     color: var(--muted);
     font-size: 14px;
     transition: color 0.2s;
 }
 
-.navbar nav a:hover {
+.header nav a:hover {
     color: var(--primary);
-}
-
-.nav-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.nav-actions button {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 9px 13px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-#menuToggle {
-    display: none;
 }
 
 /* HERO */
@@ -104,16 +86,14 @@ button, input {
     align-items: center;
     justify-content: center;
     text-align: center;
+
     background:
-        radial-gradient(ellipse at 50% 10%, rgba(130,75,255,0.23), transparent 55%),
-        radial-gradient(ellipse at 80% 90%, rgba(56,189,248,0.08), transparent 45%);
+        radial-gradient(ellipse at 50% 10%, rgba(130,75,255,0.28), transparent 55%),
+        radial-gradient(ellipse at 80% 90%, rgba(56,189,248,0.12), transparent 45%),
+        #090613;
 }
 
-.hero-content {
-    max-width: 800px;
-}
-
-.eyebrow {
+.tagline {
     color: var(--primary);
     font-size: 12px;
     font-weight: 700;
@@ -125,68 +105,27 @@ button, input {
     line-height: 1.12;
     margin: 22px 0;
     letter-spacing: -2px;
+    max-width: 900px;
 }
 
-.hero h1 span,
-.section-heading h2 span,
-.about-section h2 span {
+.hero h1 span {
     background: linear-gradient(100deg, #c4a5ff, #8b5cf6, #38bdf8);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
 }
 
-.hero-content > p {
+.hero > p:not(.tagline) {
     color: var(--muted);
     max-width: 580px;
     margin: 0 auto;
-}
-
-.search-box {
-    display: flex;
-    max-width: 550px;
-    margin: 35px auto 15px;
-    padding: 7px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    gap: 8px;
-}
-
-.search-box input {
-    flex: 1;
-    min-width: 0;
-    padding: 12px;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text);
-}
-
-.search-box button {
-    padding: 12px 20px;
-    background: var(--secondary);
-    color: white;
-    border: none;
-    border-radius: 9px;
-    cursor: pointer;
-}
-
-.search-box button:hover {
-    background: var(--primary);
-}
-
-.hero-content .hero-note {
-    font-size: 12px;
-    letter-spacing: 2px;
-    margin-top: 16px;
 }
 
 /* EXPLORE BUTTON */
 
 .main-button {
     display: inline-block;
-    margin-top: 20px;
+    margin-top: 25px;
     padding: 13px 25px;
     background: var(--secondary);
     color: white;
@@ -200,7 +139,7 @@ button, input {
     transform: translateY(-3px);
 }
 
-/* GALAXY VOICE AI BUTTON */
+/* VOICE AI BUTTON */
 
 .voice-button {
     display: inline-flex;
@@ -209,13 +148,12 @@ button, input {
     gap: 12px;
     margin-top: 8px;
     padding: 14px 25px;
-    border: 1px solid rgba(130, 110, 255, 0.7);
+    border: 1px solid rgba(130,110,255,0.7);
     border-radius: 14px;
     background: linear-gradient(110deg, #8257ff, #39c9e8);
     color: #080817;
-    text-decoration: none;
     font-weight: 800;
-    box-shadow: 0 0 22px rgba(130, 87, 255, 0.25);
+    box-shadow: 0 0 22px rgba(130,87,255,0.3);
     transition: 0.25s ease;
 }
 
@@ -226,101 +164,57 @@ button, input {
 
 .voice-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0 30px rgba(130, 87, 255, 0.5);
+    box-shadow: 0 0 30px rgba(130,87,255,0.5);
 }
 
 .voice-button:hover span {
     transform: translateX(4px);
 }
 
-/* SECTIONS */
+/* TOOLS SECTION */
 
-.section {
+.tools-section {
     padding: 85px 8%;
-}
-
-.section-heading {
     text-align: center;
-    margin-bottom: 45px;
+    background: rgba(255,255,255,0.015);
 }
 
-.section-heading h2,
+.tools-section h2,
 .about-section h2 {
     font-size: clamp(28px, 4vw, 40px);
     margin: 12px 0;
 }
 
-.section-heading p,
-.about-section p {
+.section-description {
     color: var(--muted);
+    margin-bottom: 45px;
 }
 
-/* CATEGORY CARDS */
-
-.category-grid {
+.tools-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    text-align: left;
 }
 
-.category-card {
-    padding: 28px;
+.tool-card {
+    display: block;
     background: var(--surface);
+    padding: 28px;
     border: 1px solid var(--border);
-    border-radius: 16px;
-    transition: 0.25s;
+    border-radius: 17px;
+    transition: 0.25s ease;
 }
 
-.category-card:hover,
 .tool-card:hover {
     transform: translateY(-6px);
     border-color: var(--primary);
     background: var(--surface-hover);
 }
 
-.category-card span {
-    font-size: 30px;
-}
-
-.category-card h3 {
-    margin: 12px 0 5px;
-}
-
-.category-card p {
-    color: var(--muted);
-    font-size: 14px;
-}
-
-/* FEATURED TOOLS */
-
-.featured-section {
-    background: rgba(255,255,255,0.015);
-}
-
-.tool-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-.tool-card {
-    background: var(--surface);
-    padding: 28px;
-    border: 1px solid var(--border);
-    border-radius: 17px;
-    transition: 0.25s;
-}
-
 .tool-icon {
     font-size: 35px;
     margin-bottom: 15px;
-}
-
-.tool-tag {
-    display: inline-block;
-    color: var(--primary);
-    font-size: 11px;
-    margin-bottom: 10px;
 }
 
 .tool-card h3 {
@@ -331,10 +225,10 @@ button, input {
 .tool-card p {
     color: var(--muted);
     font-size: 14px;
-    min-height: 65px;
+    min-height: 50px;
 }
 
-.tool-card a {
+.tool-card > span {
     display: inline-block;
     margin-top: 18px;
     color: var(--primary);
@@ -342,109 +236,69 @@ button, input {
     font-size: 14px;
 }
 
-.no-results {
-    text-align: center;
-    color: var(--muted);
-    margin-top: 25px;
-}
-
 /* ABOUT */
 
 .about-section {
     text-align: center;
     padding: 90px 20px;
-    background: radial-gradient(ellipse at center, rgba(117,72,232,0.15), transparent 65%);
+    background:
+        radial-gradient(ellipse at center, rgba(117,72,232,0.15), transparent 65%),
+        #090613;
 }
 
-.about-section p {
+.about-section p:not(.tagline) {
     max-width: 600px;
     margin: 0 auto;
+    color: var(--muted);
 }
 
 /* FOOTER */
 
-footer {
+.footer {
     padding: 30px 8%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     border-top: 1px solid var(--border);
-    gap: 20px;
+    text-align: center;
 }
 
-footer p {
+.footer p {
     color: var(--muted);
     font-size: 13px;
 }
 
-/* LIGHT THEME */
-
-body.light-theme {
-    --bg: #f7f4ff;
-    --surface: #ffffff;
-    --surface-hover: #eee7ff;
-    --text: #211735;
-    --muted: #6d647d;
-    --border: rgba(30,20,50,0.12);
-}
-
-body.light-theme .navbar {
-    background: rgba(247,244,255,0.9);
-}
-
-/* RESPONSIVE DESIGN */
+/* RESPONSIVE */
 
 @media (max-width: 800px) {
-    .navbar {
+    .header {
         padding: 0 5%;
     }
 
-    #menuToggle {
-        display: block;
+    .header nav {
+        gap: 15px;
     }
 
-    .navbar nav {
-        display: none;
-        position: absolute;
-        top: 76px;
-        left: 0;
-        width: 100%;
-        padding: 22px;
-        flex-direction: column;
-        background: var(--surface);
-        gap: 20px;
-    }
-
-    .navbar nav.show {
-        display: flex;
-    }
-
-    .category-grid,
-    .tool-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .tools-grid {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 550px) {
     .hero {
         min-height: 500px;
+        padding: 75px 20px;
     }
 
-    .search-box {
-        flex-direction: column;
+    .hero h1 {
+        letter-spacing: -1px;
     }
 
-    .category-grid,
-    .tool-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .section {
+    .tools-section {
         padding: 65px 6%;
     }
 
-    footer {
-        flex-direction: column;
-        text-align: center;
+    .footer {
+        padding: 25px;
     }
 }
