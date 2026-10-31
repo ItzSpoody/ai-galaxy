@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galaxy Voice AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="../index.html" class="brand">✦ GALAXY AI</a>
+    <span class="status">● VOICE STUDIO</span>
+    <a href="../index.html" class="back">← Home</a>
+  </header>
+
+  <main class="container">
+
+    <section class="hero">
+      <div class="logo">🎙️</div>
+      <h1>Galaxy <span>Voice AI</span></h1>
+      <p>Turn your scripts into natural AI voiceovers.</p>
+    </section>
+
+    <section class="studio">
+
+      <div class="section-heading">
+        <h2>Create your voiceover</h2>
+        <span class="tag">AI STUDIO</span>
+      </div>
+
+      <label for="scriptInput">Your script</label>
+      <textarea id="scriptInput"
+        placeholder="Enter your video script here..."></textarea>
+
+      <div class="counter">
+        <span id="charCount">0 characters</span>
+        <span>Write your narration</span>
+      </div>
+
+      <div class="settings">
+
+        <div class="field">
+          <label for="voiceSelect">AI Voice</label>
+          <select id="voiceSelect">
+            <option value="Kore">Kore — Expressive</option>
+            <option value="Puck">Puck — Energetic</option>
+            <option value="Charon">Charon — Deep narrator</option>
+            <option value="Fenrir">Fenrir — Strong narrator</option>
+            <option value="Aoede">Aoede — Friendly</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="styleSelect">Speaking style</label>
+          <select id="styleSelect">
+            <option value="Natural and conversational">Natural</option>
+            <option value="Energetic and enthusiastic">Energetic</option>
+            <option value="Calm and relaxing">Calm</option>
+            <option value="Dramatic storytelling">Storytelling</option>
+            <option value="Professional and clear">Professional</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="languageSelect">Language</label>
+          <select id="languageSelect">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+        </div>
+
+      </div>
+
+      <button id="generateBtn" class="generate">
+        ✦ Generate Voiceover
+      </button>
+
+      <div id="statusMessage" class="message">
+        Your generated audio will appear here.
+      </div>
+
+      <section id="audioSection" class="audio-section" hidden>
+        <h3>Your voiceover</h3>
+        <audio id="audioPlayer" controls></audio>
+        <a id="downloadBtn" class="download" download="galaxy-voice.wav">
+          ↓ Download WAV
+        </a>
+      </section>
+
+    </section>
+
+    <footer>
+      Made with ✦ by Galaxy AI
+    </footer>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
