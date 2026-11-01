@@ -348,3 +348,33 @@ body.light {
     width: 100%;
   }
 }
+
+/* Galaxy AI message bar visibility fix */
+
+.composer-area {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 260px !important;
+  right: 0 !important;
+  width: auto !important;
+  min-height: 90px;
+  z-index: 1000 !important;
+  display: block !important;
+  background: var(--bg);
+  padding: 12px 20px 15px !important;
+}
+
+.composer {
+  width: 100%;
+}
+
+.chat-area {
+  padding-bottom: 120px !important;
+  min-height: 0;
+}
+
+@media (max-width: 700px) {
+  .composer-area {
+    left: 0 !important;
+  }
+}
