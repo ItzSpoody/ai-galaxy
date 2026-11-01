@@ -1,9 +1,12 @@
 
+const API_URL = "https://galaxy-ai-api.master-raghav09.workers.dev";
+
 const chatForm = document.getElementById("chatForm");
 const userInput = document.getElementById("userInput");
 const messages = document.getElementById("messages");
 const welcome = document.getElementById("welcome");
 const history = document.getElementById("history");
+const sendBtn = document.getElementById("sendBtn");
 
 let conversations = JSON.parse(
   localStorage.getItem("galaxyChats") || "[]"
@@ -28,30 +31,38 @@ function createChat() {
   renderMessages();
 }
 
-function addMessage(role, content) {
-  if (!currentChat) createChat();
+function addMessageToChat(chat, role, content) {
+  chat.messages.push({ role, content });
 
-  currentChat.messages.push({ role, content });
-
-  if (role === "user" && currentChat.title === "New Chat") {
-    currentChat.title = content.slice(0, 25);
+  if (role === "user" && chat.title === "New Chat") {
+    chat.title = content.slice(0, 25);
   }
 
   saveChats();
-  renderMessages();
   renderHistory();
+
+  if (currentChat === chat) {
+    renderMessages();
+  }
+}
+
+function addMessage(role, content) {
+  if (!currentChat) createChat();
+  addMessageToChat(currentChat, role, content);
 }
 
 function renderMessages() {
   messages.innerHTML = "";
 
   const hasMessages = currentChat && currentChat.messages.length > 0;
+
   welcome.style.display = hasMessages ? "none" : "flex";
 
   if (!hasMessages) return;
 
   currentChat.messages.forEach(message => {
     const bubble = document.createElement("div");
+
     bubble.className = "message " +
       (message.role === "user" ? "user-message" : "ai-message");
 
@@ -78,20 +89,79 @@ function renderHistory() {
   });
 }
 
-chatForm.addEventListener("submit", event => {
+chatForm.addEventListener("submit", async event => {
   event.preventDefault();
 
   const text = userInput.value.trim();
-  if (!text) return;
 
-  addMessage("user", text);
+  if (!text || sendBtn.disabled) return;
+
+  if (!currentChat) createChat();
+
+  const chatAtSend = currentChat;
+
+  addMessageToChat(chatAtSend, "user", text);
   userInput.value = "";
 
-  // Temporary placeholder until we connect the real AI.
-  addMessage(
-    "assistant",
-    "Galaxy AI is being connected! The real AI engine will be added in the next step. 🌌"
-  );
+  sendBtn.disabled = true;
+
+  const typing = document.createElement("div");
+  typing.className = "message ai-message";
+  typing.textContent = "Galaxy AI is thinking...";
+  
+  if (currentChat === chatAtSend) {
+    messages.appendChild(typing);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  try {
+    const apiMessages = chatAtSend.messages.slice(-30);
+
+    // Gemini conversations should start with a user message.
+    if (apiMessages[0]?.role === "assistant") {
+      apiMessages.shift();
+    }
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        messages: apiMessages
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "The AI request failed.");
+    }
+
+    if (!data.reply) {
+      throw new Error("Gemini returned an empty reply.");
+    }
+
+    addMessageToChat(chatAtSend, "assistant", data.reply);
+
+  } catch (error) {
+    console.error("Galaxy AI error:", error);
+
+    addMessageToChat(
+      chatAtSend,
+      "assistant",
+      "Sorry! I couldn't connect right now. Please try again. Error: " +
+        error.message
+    );
+
+  } finally {
+    typing.remove();
+    sendBtn.disabled = false;
+
+    if (currentChat === chatAtSend) {
+      userInput.focus();
+    }
+  }
 });
 
 document.getElementById("newChatBtn").addEventListener("click", createChat);
