@@ -15,7 +15,11 @@ let conversations = JSON.parse(
 let currentChat = null;
 
 function saveChats() {
-  localStorage.setItem("galaxyChats", JSON.stringify(conversations));
+  try {
+    localStorage.setItem("galaxyChats", JSON.stringify(conversations));
+  } catch (error) {
+    console.warn("Chat history storage is full.", error);
+  }
 }
 
 function createChat() {
@@ -31,8 +35,8 @@ function createChat() {
   renderMessages();
 }
 
-function addMessageToChat(chat, role, content) {
-  chat.messages.push({ role, content });
+function addMessageToChat(chat, role, content, extra = {}) {
+  chat.messages.push({ role, content, ...extra });
 
   if (role === "user" && chat.title === "New Chat") {
     chat.title = content.slice(0, 25);
@@ -55,7 +59,6 @@ function renderMessages() {
   messages.innerHTML = "";
 
   const hasMessages = currentChat && currentChat.messages.length > 0;
-
   welcome.style.display = hasMessages ? "none" : "flex";
 
   if (!hasMessages) return;
@@ -66,7 +69,25 @@ function renderMessages() {
     bubble.className = "message " +
       (message.role === "user" ? "user-message" : "ai-message");
 
-    bubble.textContent = message.content;
+    if (message.type === "image" && message.imageData) {
+      const caption = document.createElement("p");
+      caption.textContent = "Generated image: " + message.content;
+
+      const image = document.createElement("img");
+      image.src = "data:image/jpeg;base64," + message.imageData;
+      image.alt = message.content;
+      image.style.maxWidth = "100%";
+      image.style.width = "420px";
+      image.style.borderRadius = "12px";
+      image.style.display = "block";
+      image.style.marginTop = "10px";
+
+      bubble.appendChild(caption);
+      bubble.appendChild(image);
+    } else {
+      bubble.textContent = message.content;
+    }
+
     messages.appendChild(bubble);
   });
 
@@ -89,6 +110,10 @@ function renderHistory() {
   });
 }
 
+function isImageRequest(text) {
+  return /^(generate|create|make|draw)\s+(me\s+)?(an?\s+)?(image|picture|photo|artwork|illustration)\b/i.test(text.trim());
+}
+
 chatForm.addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -99,50 +124,93 @@ chatForm.addEventListener("submit", async event => {
   if (!currentChat) createChat();
 
   const chatAtSend = currentChat;
+  const wantsImage = isImageRequest(text);
 
   addMessageToChat(chatAtSend, "user", text);
   userInput.value = "";
-
   sendBtn.disabled = true;
 
   const typing = document.createElement("div");
   typing.className = "message ai-message";
-  typing.textContent = "Galaxy AI is thinking...";
-  
+  typing.textContent = wantsImage
+    ? "Galaxy AI is creating your image..."
+    : "Galaxy AI is thinking...";
+
   if (currentChat === chatAtSend) {
     messages.appendChild(typing);
     messages.scrollTop = messages.scrollHeight;
   }
 
   try {
-    const apiMessages = chatAtSend.messages.slice(-30);
+    let response;
+    let data;
 
-    // Gemini conversations should start with a user message.
-    if (apiMessages[0]?.role === "assistant") {
-      apiMessages.shift();
+    if (wantsImage) {
+      response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          action: "generate-image",
+          prompt: text
+        })
+      });
+
+      data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Image generation failed.");
+      }
+
+      if (!data.image) {
+        throw new Error("The image model returned no image.");
+      }
+
+      addMessageToChat(
+        chatAtSend,
+        "assistant",
+        text,
+        {
+          type: "image",
+          imageData: data.image
+        }
+      );
+    } else {
+      const apiMessages = chatAtSend.messages
+        .filter(message => !message.type)
+        .slice(-30)
+        .map(message => ({
+          role: message.role,
+          content: message.content
+        }));
+
+      if (apiMessages[0]?.role === "assistant") {
+        apiMessages.shift();
+      }
+
+      response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          messages: apiMessages
+        })
+      });
+
+      data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "The AI request failed.");
+      }
+
+      if (!data.reply) {
+        throw new Error("Galaxy AI returned an empty reply.");
+      }
+
+      addMessageToChat(chatAtSend, "assistant", data.reply);
     }
-
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        messages: apiMessages
-      })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.error || "The AI request failed.");
-    }
-
-    if (!data.reply) {
-      throw new Error("Gemini returned an empty reply.");
-    }
-
-    addMessageToChat(chatAtSend, "assistant", data.reply);
 
   } catch (error) {
     console.error("Galaxy AI error:", error);
@@ -150,7 +218,7 @@ chatForm.addEventListener("submit", async event => {
     addMessageToChat(
       chatAtSend,
       "assistant",
-      "Sorry! I couldn't connect right now. Please try again. Error: " +
+      "Sorry! I couldn't complete that request. Please try again. Error: " +
         error.message
     );
 
