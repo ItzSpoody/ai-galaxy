@@ -94,26 +94,160 @@ function renderMessages() {
   messages.scrollTop = messages.scrollHeight;
 }
 
+// RENAME CHAT
+function renameChat(chat) {
+  const newTitle = prompt("Enter a new chat name:", chat.title);
+
+  if (newTitle === null) return;
+
+  const cleanedTitle = newTitle.trim();
+
+  if (!cleanedTitle) {
+    alert("Chat name cannot be empty.");
+    return;
+  }
+
+  chat.title = cleanedTitle.slice(0, 60);
+
+  saveChats();
+  renderHistory();
+}
+
+// DELETE ONE CHAT
+function deleteChat(chat) {
+  const confirmed = confirm(
+    'Are you sure you want to delete "' + chat.title + '"?'
+  );
+
+  if (!confirmed) return;
+
+  conversations = conversations.filter(item => item !== chat);
+
+  if (currentChat === chat) {
+    currentChat = conversations[0] || null;
+  }
+
+  saveChats();
+  renderHistory();
+  renderMessages();
+}
+
+// DELETE ALL CHATS
+function deleteAllChats() {
+  if (conversations.length === 0) return;
+
+  const confirmed = confirm(
+    "Delete ALL chat history? This cannot be undone."
+  );
+
+  if (!confirmed) return;
+
+  conversations = [];
+  currentChat = null;
+
+  saveChats();
+  renderHistory();
+  renderMessages();
+}
+
+// RENDER CHAT HISTORY
 function renderHistory() {
   history.innerHTML = "";
 
-  conversations.forEach(chat => {
-    const button = document.createElement("button");
-    button.textContent = "💬 " + chat.title;
+  // Delete all button
+  if (conversations.length > 0) {
+    const clearButton = document.createElement("button");
 
-    button.addEventListener("click", () => {
+    clearButton.textContent = "🗑️ Clear all chats";
+    clearButton.className = "history-clear-all";
+
+    clearButton.style.color = "#ff6b78";
+    clearButton.style.fontSize = "12px";
+    clearButton.style.textAlign = "center";
+    clearButton.style.marginBottom = "5px";
+
+    clearButton.addEventListener("click", deleteAllChats);
+
+    history.appendChild(clearButton);
+  }
+
+  conversations.forEach(chat => {
+    const item = document.createElement("div");
+    item.className = "history-item";
+
+    // Chat title button
+    const chatButton = document.createElement("button");
+    chatButton.className = "history-chat";
+    chatButton.textContent = "💬 " + chat.title;
+
+    chatButton.addEventListener("click", () => {
       currentChat = chat;
       renderMessages();
+
+      document.querySelector(".sidebar").classList.remove("open");
     });
 
-    history.appendChild(button);
+    // Three-dot menu button
+    const menuButton = document.createElement("button");
+    menuButton.className = "history-menu-btn";
+    menuButton.textContent = "⋮";
+    menuButton.title = "Chat options";
+
+    // Dropdown menu
+    const dropdown = document.createElement("div");
+    dropdown.className = "history-dropdown";
+    dropdown.style.display = "none";
+
+    const renameButton = document.createElement("button");
+    renameButton.textContent = "✏️ Rename";
+
+    renameButton.addEventListener("click", event => {
+      event.stopPropagation();
+      renameChat(chat);
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "🗑️ Delete";
+    deleteButton.className = "delete-chat";
+
+    deleteButton.addEventListener("click", event => {
+      event.stopPropagation();
+      deleteChat(chat);
+    });
+
+    dropdown.appendChild(renameButton);
+    dropdown.appendChild(deleteButton);
+
+    menuButton.addEventListener("click", event => {
+      event.stopPropagation();
+
+      const wasOpen = dropdown.style.display === "block";
+
+      document.querySelectorAll(".history-dropdown").forEach(menu => {
+        menu.style.display = "none";
+      });
+
+      dropdown.style.display = wasOpen ? "none" : "block";
+    });
+
+    dropdown.addEventListener("click", event => {
+      event.stopPropagation();
+    });
+
+    item.appendChild(chatButton);
+    item.appendChild(menuButton);
+    item.appendChild(dropdown);
+
+    history.appendChild(item);
   });
 }
 
+// IMAGE REQUEST DETECTION
 function isImageRequest(text) {
   return /^(generate|create|make|draw)\s+(me\s+)?(an?\s+)?(image|picture|photo|artwork|illustration)\b/i.test(text.trim());
 }
 
+// CHAT FORM
 chatForm.addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -232,8 +366,10 @@ chatForm.addEventListener("submit", async event => {
   }
 });
 
+// NEW CHAT
 document.getElementById("newChatBtn").addEventListener("click", createChat);
 
+// THEME TOGGLE
 document.getElementById("themeBtn").addEventListener("click", () => {
   document.body.classList.toggle("light");
 
@@ -243,10 +379,21 @@ document.getElementById("themeBtn").addEventListener("click", () => {
   );
 });
 
+// MOBILE SIDEBAR
 document.getElementById("menuBtn").addEventListener("click", () => {
   document.querySelector(".sidebar").classList.toggle("open");
 });
 
+// CLOSE DROPDOWN WHEN CLICKING OUTSIDE HISTORY
+document.addEventListener("click", event => {
+  if (!history.contains(event.target)) {
+    document.querySelectorAll(".history-dropdown").forEach(menu => {
+      menu.style.display = "none";
+    });
+  }
+});
+
+// SUGGESTIONS
 document.querySelectorAll(".suggestion").forEach(button => {
   button.addEventListener("click", () => {
     userInput.value = button.textContent.replace(/^.*? /, "");
@@ -254,10 +401,12 @@ document.querySelectorAll(".suggestion").forEach(button => {
   });
 });
 
+// RESTORE THEME
 if (localStorage.getItem("galaxyTheme") === "light") {
   document.body.classList.add("light");
 }
 
+// LOAD SAVED CHATS
 if (conversations.length > 0) {
   currentChat = conversations[0];
 }
